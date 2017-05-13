@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import { Field, reduxForm } from 'redux-form';
+import { connect } from 'react-redux';
+import { createPost } from '../actions';
 
 class PostNew extends Component {
   renderField(field) {
@@ -22,7 +24,9 @@ class PostNew extends Component {
   }
 
   onSubmit(values) {
-    console.log(values);
+    this.props.createPost(values, () => {
+      this.props.history.push('/');
+    });
   }
 
   // handle submit takes a function that we define and pass that to handleSubmit
@@ -35,15 +39,15 @@ class PostNew extends Component {
       <div>
         <form onSubmit={ handleSubmit(this.onSubmit.bind(this)) }>
           <div>
-          <Field
-            label='Title'
-            name='title'
-            component={ this.renderField }
-          />
+            <Field
+              label='Title'
+              name='title'
+              component={ this.renderField }
+            />
           </div>
           <Field
             label='Categories'
-            name='categories'
+            name='category'
             component={ this.renderField }
           />
           <Field
@@ -53,7 +57,7 @@ class PostNew extends Component {
           />
           <button type='submit' className='btn btn-primary'>Save</button>
           <Link className='btn btn-danger' to='/'>
-            Cancel 
+            Cancel
           </Link>
         </form>
       </div>
@@ -87,7 +91,9 @@ function validate(values) {
 export default reduxForm({
   validate,
   form: 'PostNewForm'
-})( PostNew );
+})(
+  connect(null, { createPost })(PostNew)
+);
 
 // component={} takes in a function that will be used to display the component
 // the field component doesnt know how to render itself on the screen it only interacts with redux form
